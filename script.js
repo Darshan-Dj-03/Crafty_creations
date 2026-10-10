@@ -4,8 +4,6 @@
   const bagCount = document.querySelector(".bag-count");
   const bagButton = document.querySelector(".bag-button");
   const toast = document.querySelector(".toast");
-  const modal = document.querySelector(".product-modal");
-  const modalImage = document.querySelector(".modal-image");
   let activeFilter = "All";
   let bag = JSON.parse(localStorage.getItem("crafty-demo-bag") || "[]");
   let saved = JSON.parse(localStorage.getItem("crafty-demo-saved") || "[]");
@@ -57,22 +55,9 @@
   }
 
   function openProduct(id) {
-    const product = products.find(item => item.id === id);
-    if (!product) return;
-    modalImage.innerHTML = `<img src="${product.image}" alt="${product.name}" />`;
-    document.querySelector(".modal-category").textContent = product.category;
-    document.querySelector("#modal-title").textContent = product.name;
-    document.querySelector(".modal-description").textContent = product.detail;
-    document.querySelector(".modal-price").textContent = price(product.price);
-    document.querySelector(".modal-add").dataset.add = product.id;
-    modal.hidden = false;
-    document.body.classList.add("modal-open");
-    document.querySelector(".modal-close").focus();
-  }
-
-  function closeProduct() {
-    modal.hidden = true;
-    document.body.classList.remove("modal-open");
+    if (products.some(product => product.id === id)) {
+      window.location.href = `product.html?id=${encodeURIComponent(id)}`;
+    }
   }
 
   document.addEventListener("click", event => {
@@ -93,11 +78,9 @@
       showToast(saved.includes(id) ? "Saved to your little wishlist ♡" : "Removed from your wishlist");
     } else if (add) addToBag(add.dataset.add);
     else if (open) openProduct(open.dataset.open);
-    if (event.target.closest(".modal-close") || event.target === modal) closeProduct();
   });
 
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !modal.hidden) closeProduct();
     if ((event.key === "Enter" || event.key === " ") && event.target.matches(".product-image[role=button]")) {
       event.preventDefault(); openProduct(event.target.dataset.open);
     }
